@@ -2,38 +2,67 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define MAX_LINES 100
+#define MAX_LENGTH 1500
+
 typedef struct Student {
     char* name;
     int frequency;
+    struct Student* next;
 } Student;
 
-struct Student* readNameDB(char* filename, Student *students, size_t arraySize) {
-    // Allocate memory for an array of students structs.
-    //students = (struct Student*) malloc(sizeof(struct Student));
+Student* create_student(char* name, int frequency) {
+    Student* newStudents = malloc(sizeof(Student));
 
-    struct Student currentStudent = {"test", 2};
+    if (NULL != newStudents) {
+        newStudents->name = name;
+        newStudents->frequency = frequency;
+        newStudents->next = NULL;
+    }
 
-    students[2] = currentStudent;
+    return newStudents;
+}
 
-    //printf("%llu", sizeof(students)/ sizeof(students[0]));
+Student* add_student(Student* students, Student student) {
+    Student* newStudent = create_student(student.name, student.frequency);
 
-    return students;
+    if (NULL != newStudent) {
+        newStudent->next = students;
+    }
+
+    return newStudent;
+}
+
+void readNameDB(char* filename) {
+
 }
 
 int main() {
-    struct Student students[] = {
-            {"Oskar", 1},
-            { "Oskar2", 2},
-    };
+    char data[MAX_LINES][MAX_LENGTH];
 
-    //printf("%d", sizeof(students) / sizeof students[0]);
+    // Open file in reading mode.
+    FILE *file;
 
-    Student *test = readNameDB("vorname.txt", students, sizeof(students)/sizeof(students[0]));
-    printf("%s\n", students[2].name);
+    file = fopen("E:\\programming\\c workspace\\c\\BigBrother\\vornamen.txt" , "r");
 
-    for (int i = 0; i < sizeof(test)/sizeof(test[0]); i++) {
-        //printf("%d\n", test[i].frequency);
+    // Exit program when file couldn't be read.
+    if (file == NULL) {
+        perror("Couldn't read file!");
+        return 1;
     }
+
+    int line = 0;
+
+    while (!feof(file) && !ferror(file)) {
+        if (fgets(data[line], MAX_LENGTH, file) != NULL) {
+            ++line;
+        }
+    }
+
+    fclose(file);
+
+    for (int i = 0; i < line; i++)
+        printf("%s", data[i]);
 
     return 0;
 }
